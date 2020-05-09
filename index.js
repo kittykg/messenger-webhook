@@ -4,12 +4,18 @@
 const
     express = require('express'),
     bodyParser = require('body-parser'),
-    serverless = require('serverless-http'),
     app = express().use(bodyParser.json()); // creates express http server
+
+require('dotenv').config();
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
+app.get('/', (_, res) => {
+    res.status(200).send(
+        "<h1>Hello!</h1>"
+    );
+})
 app.post('/webhook', (req, res) => {
 
     let body = req.body;
@@ -18,7 +24,7 @@ app.post('/webhook', (req, res) => {
     if (body.object === 'page') {
 
         // Iterates over each entry - there may be multiple if batched
-        body.entry.forEach(function(entry) {
+        body.entry.forEach(function (entry) {
 
             // Gets the message. entry.messaging is an array, but
             // will only ever contain one message, so we get index 0
@@ -62,5 +68,3 @@ app.get('/webhook', (req, res) => {
         }
     }
 });
-
-module.exports.handler = serverless(app);
